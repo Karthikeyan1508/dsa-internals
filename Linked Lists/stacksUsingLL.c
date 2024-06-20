@@ -11,7 +11,7 @@ struct Node* top = NULL;
 void push(int item) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     if (newNode == NULL) {
-        printf("Stack Overflow\n");
+        printf("Wrong Entry\n");
         return;
     }
     newNode->data = item;
