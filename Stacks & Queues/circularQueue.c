@@ -1,97 +1,147 @@
-// Circular Queue implementation in C
-
+#include <stdbool.h>
 #include <stdio.h>
 
-#define SIZE 5
+#define MAX 5
 
-int items[SIZE];
-int front = -1, rear = -1;
+int QUEUE[MAX], REAR = -1, FRONT = -1;
 
-// Check if the queue is full
-int isFull() {
-  if ((front == rear + 1) || (front == 0 && rear == SIZE - 1)) return 1;
-  return 0;
-}
-
-// Check if the queue is empty
-int isEmpty() {
-  if (front == -1) return 1;
-  return 0;
-}
-
-// Adding an element
-void enQueue(int element) {
-  if (isFull())
-    printf("\n Queue is full!! \n");
-  else {
-    if (front == -1) front = 0;
-    rear = (rear + 1) % SIZE;
-    items[rear] = element;
-    printf("\n Inserted -> %d", element);
-  }
-}
-
-// Removing an element
-int deQueue() {
-  int element;
-  if (isEmpty()) {
-    printf("\n Queue is empty !! \n");
-    return (-1);
-  } else {
-    element = items[front];
-    if (front == rear) {
-      front = -1;
-      rear = -1;
-    } 
-    // Q has only one element, so we reset the 
-    // queue after dequeing it. ?
-    else {
-      front = (front + 1) % SIZE;
-    }
-    printf("\n Deleted element -> %d \n", element);
-    return (element);
-  }
-}
-
-// Display the queue
-void display() {
-  int i;
-  if (isEmpty())
-    printf(" \n Empty Queue\n");
-  else {
-    printf("\n Front -> %d ", front);
-    printf("\n Items -> ");
-    for (i = front; i != rear; i = (i + 1) % SIZE) {
-      printf("%d ", items[i]);
-    }
-    printf("%d ", items[i]);
-    printf("\n Rear -> %d \n", rear);
-  }
-}
+void insertRear();
+void deleteFront();
+void deleteRear();
+void insertFront();
+void display();
+bool isFull();
+bool isEmpty();
 
 int main() {
-  // Fails because front = -1
-  deQueue();
 
-  enQueue(1);
-  enQueue(2);
-  enQueue(3);
-  enQueue(4);
-  enQueue(5);
+  int choice;
 
-  // Fails to enqueue because front == 0 && rear == SIZE - 1
-  enQueue(6);
+  printf("Menu:\n 1. Insert from Rear\n 2. Delete from Front\n 3. "
+         "Insert from Front\n 4. Delete from Rear\n 5. Display\n 6. Exit\n");
 
-  display();
-  deQueue();
+  while (true) {
 
-  display();
+    printf("\nEnter choice: ");
+    scanf("%d", &choice);
 
-  enQueue(7);
-  display();
+    switch (choice) {
 
-  // Fails to enqueue because front == rear + 1
-  enQueue(8);
+    case 1:
+      insertRear();
+      break;
+    case 2:
+      deleteFront();
+      break;
+    case 3:
+      insertFront();
+      break;
+    case 4:
+      deleteRear();
+      break;
+    case 5:
+      display();
+      break;
+    case 6:
+      printf("Exiting...\n");
+      return 0;
+    default:
+      printf("Invalid choice");
+    }
+  }
 
   return 0;
+}
+
+bool isFull() { return REAR == MAX - 1; }
+
+bool isEmpty() { return FRONT < 0; }
+
+void insertRear() {
+
+  int a;
+
+  if (isFull()) {
+    printf("Queue is full");
+    return;
+  }
+
+  if (FRONT == -1)
+    FRONT++;
+
+  printf("Enter Element: ");
+  scanf("%d", &a);
+
+  QUEUE[++REAR] = a;
+}
+
+void deleteFront() {
+
+  int value;
+
+  if (isEmpty()) {
+    printf("Queue Empty");
+    return;
+  }
+
+  value = QUEUE[FRONT];
+
+  if (REAR == FRONT)
+    FRONT = REAR = -1;
+  else
+    FRONT++;
+
+  printf("The deleted element from front is: %d", value);
+}
+
+void deleteRear() {
+
+  int value;
+
+  if (isEmpty()) {
+    printf("Queue Empty");
+    return;
+  }
+
+  value = QUEUE[REAR];
+
+  if (REAR == FRONT)
+    FRONT = REAR = -1;
+  else
+    REAR--;
+
+  printf("The deleted element from rear is: %d", value);
+}
+
+void insertFront() {
+
+  if (FRONT == 0) {
+    printf("Front is at the beginning - insertion not possible");
+    return;
+  }
+
+  if (FRONT == -1) {
+    FRONT++;
+    REAR++;
+  } else
+    FRONT--;
+
+  int x;
+  printf("Enter Element: ");
+  scanf("%d", &x);
+
+  QUEUE[FRONT] = x;
+}
+
+void display() {
+
+  if (isEmpty()) {
+    printf("Queue Empty");
+    return;
+  }
+
+  printf("Printing DeQueue:\n");
+
+  for (int i = FRONT; i <= REAR; i++)
+    printf("\t%d", QUEUE[i]);
 }
