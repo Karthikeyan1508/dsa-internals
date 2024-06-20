@@ -1,108 +1,92 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-// Node structure to represent linked list
-struct Node {
-    int row;
-    int col;
-    int data;
-    struct Node* next;
+struct Node
+{
+  int key;
+  int row_position;
+  int col_postion;
+  struct Node *Next;
 };
 
-// Function to create a new node
-void create_new_node(struct Node** p, int row_index,
-                     int col_index, int x) {
-    struct Node* temp = *p;
-    struct Node* r;
+void create_new_node(struct Node** head, int non_zero_element,
+          int row_index, int col_index )
+{
+  struct Node *temp, *r;
+  temp = *head;
+  if (temp == NULL)
+  {
+    temp = (struct Node *) malloc (sizeof(struct Node));
+    temp->key = non_zero_element;
+    temp->row_position = row_index;
+    temp->col_postion = col_index;
+    temp->Next = NULL;
+    *head = temp;
 
-    // If linked list is empty then create the first node and assign value.
-    if (temp == NULL) {
-        temp = (struct Node*)malloc(sizeof(struct Node));
-        temp->row = row_index;
-        temp->col = col_index;
-        temp->data = x;
-        temp->next = NULL;
-        *p = temp;
-    }
+  }
+  else
+  {
+    while (temp->Next != NULL)
+      temp = temp->Next;
+    r = (struct Node *) malloc (sizeof(struct Node));
+    r->key = non_zero_element;
+    r->row_position = row_index;
+    r->col_postion = col_index;
+    r->Next = NULL;
+    temp->Next = r;
 
-    // If linked list is already created then append the newly created node
-    else {
-        while (temp->next != NULL)
-            temp = temp->next;
-
-        r = (struct Node*)malloc(sizeof(struct Node));
-        r->row = row_index;
-        r->col = col_index;
-        r->data = x;
-        r->next = NULL;
-        temp->next = r;
-    }
+  }
 }
 
-// Function to print contents of linked list starting from start
-void printList(struct Node* start) {
-    struct Node* ptr = start;
-    printf("row_position:");
-    while (ptr != NULL) {
-        printf("%d ", ptr->row);
-        ptr = ptr->next;
-    }
-    printf("\n");
-    printf("column_position:");
+void Print_list(struct Node* head)
+{
+  struct Node *temp, *r, *s;
+  temp = r = s = head;
 
-    ptr = start;
-    while (ptr != NULL) {
-        printf("%d ", ptr->col);
-        ptr = ptr->next;
-    }
-    printf("\n");
-    printf("Value:");
-    ptr = start;
+  printf("row_position: ");
+  while(temp != NULL)
+  {
 
-    while (ptr != NULL) {
-        printf("%d ", ptr->data);
-        ptr = ptr->next;
-    }
+    printf("%d ", temp->row_position);
+    temp = temp->Next;
+  }
+  printf("\n");
+
+  printf("col_postion: ");
+  while(r != NULL)
+  {
+    printf("%d ", r->col_postion);
+    r = r->Next;
+  }
+  printf("\n");
+  printf("Value: ");
+  while(s != NULL)
+  {
+    printf("%d ", s->key);
+    s = s->Next;
+  }
+  printf("\n");
 }
 
-// Driver Code
-int main() {
-    int rows, cols;
-    printf("Enter the number of rows: ");
-    scanf("%d", &rows);
-    printf("Enter the number of columns: ");
-    scanf("%d", &cols);
+int main()
+{
+  int sparse_matric[5][4] =
+  {
+    {0, 0, 3, 0},
+    {0, 0, 5, 7},
+    {0, 0, 0, 0},
+    {0, 2, 6, 0},
+    {4, 0, 0, 0}
+  };
 
-    // Dynamic allocation of 2D array for sparse matrix
-    int** sparseMatrix = (int**)malloc(rows * sizeof(int*));
-    for (int i = 0; i < rows; ++i) {
-        sparseMatrix[i] = (int*)malloc(cols * sizeof(int));
-    }
+  struct Node* start = NULL;
 
-    printf("Enter the elements of the sparse matrix:\n");
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            scanf("%d", &sparseMatrix[i][j]);
-        }
-    }
+  for (int i = 0; i < 5; i++)
+    for (int j = 0; j < 4; j++)
+      if (sparse_matric[i][j] != 0)
+        create_new_node(&head, sparse_matric[i][j], i, j);
 
-    // Creating head/first node of list as NULL
-    struct Node* first = NULL;
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
+  Print_list(head);
 
-            // Pass only those values which are non-zero
-            if (sparseMatrix[i][j] != 0)
-                create_new_node(&first, i, j, sparseMatrix[i][j]);
-        }
-    }
-    printList(first);
-
-    // Deallocating memory for 2D array
-    for (int i = 0; i < rows; ++i) {
-        free(sparseMatrix[i]);
-    }
-    free(sparseMatrix);
-
-    return 0;
+  return 0;
 }
